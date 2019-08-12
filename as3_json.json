@@ -1,0 +1,63 @@
+{
+   "class": "AS3",
+   "action": "deploy",
+   "persist": true,
+   "declaration": {
+      "class": "ADC",
+      "schemaVersion": "3.13.0",
+      "label": "Sample AS3 declaration with sample security policy",
+      "remark": "Simple HTTP application with RR pool",
+      "Example_01": {
+         "class": "Tenant",
+         "App1": {
+            "class": "Application",
+            "template": "http",
+            "serviceMain": {
+               "class": "Service_HTTP",
+               "virtualAddresses": [
+                  "10.1.10.10"
+               ],
+               "snat": "auto",
+              "policyWAF": {
+              	"use": "Security_Policy"
+              },
+      
+               
+               "pool": "web_pool"
+            },
+            "web_pool": {
+               "class": "Pool",
+               "monitors": [
+                  "http"
+               ],
+               "members": [{
+                  "servicePort": 8080,
+                  "serverAddresses": [
+                     "10.1.20.5"
+                  ]
+               },
+               {
+               	"servicePort": 8081,
+                  "serverAddresses": [
+                     "10.1.20.5"
+                  ]
+               },
+	           {
+	           	"servicePort": 8082,
+                  "serverAddresses": [
+                     "10.1.20.5"
+                  ]
+	           }
+               
+               ]
+            },
+            "Security_Policy":{
+            	"class": "WAF_Policy",
+            	"url": "http://download.ase-exercise.internal/asm_sec_policy.xml",
+            	"ignoreChanges": true
+            }
+            
+         }
+      }
+   }
+}
